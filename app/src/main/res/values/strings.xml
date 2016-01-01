@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Weatherer</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Oh, hello, world.</string>
+    <string-array name="cities">
+        <item>Mississauga</item>
+        <item>Brampton</item>
+    </string-array>
+</resources>
