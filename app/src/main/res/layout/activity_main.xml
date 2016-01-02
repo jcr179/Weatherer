@@ -30,13 +30,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvNow"
+        android:textSize="18dp"
         android:text=""
         android:id="@+id/tvNowCityA"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/tvNow"
+        android:layout_alignParentRight="true"
+        android:textSize="18dp"
+        android:text=""
+        android:id="@+id/tvNowCityB"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/tvNowCityA"
+        android:textSize="10dp"
+        android:text=""
+        android:id="@+id/tvNowConditionsA"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvNowCityA"
+        android:layout_alignParentRight="true"
+        android:textSize="10dp"
+        android:text=""
+        android:id="@+id/tvNowConditionsB"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvNowCityA"
+        android:paddingTop="50dp"
         android:textSize="50dp"
         android:text="TODAY"
         android:id="@+id/tvToday"/>
@@ -45,20 +73,58 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvToday"
-        android:text=""
+        android:textSize="18dp"
+        android:text="city1"
         android:id="@+id/tvTodayCityA"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvTodayCityA"
-        android:text=""
+        android:layout_below="@id/tvToday"
+        android:textSize="18dp"
+        android:layout_alignParentRight="true"
+        android:text="city2"
         android:id="@+id/tvTodayCityB"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvTodayCityB"
+        android:layout_below="@id/tvTodayCityA"
+        android:textSize="10dp"
+        android:text="city1"
+        android:id="@+id/tvTodayConditionsA"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTodayCityA"
+        android:textSize="10dp"
+        android:layout_alignParentRight="true"
+        android:text="city2"
+        android:id="@+id/tvTodayConditionsB"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTodayConditionsA"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="18dp"
+        android:text="time"
+        android:id="@+id/tvTodayTime"/>
+    
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvTodayTime"
+        android:id="@+id/skToday"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/skToday"
+        android:paddingTop="30dp"
         android:textSize="50dp"
         android:text="TOMORROW"
         android:id="@+id/tvTomorrow"/>
@@ -67,15 +133,52 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvTomorrow"
-        android:text=""
+        android:textSize="18dp"
+        android:text="city1"
         android:id="@+id/tvTomorrowCityA"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvTomorrowCityA"
-        android:text=""
+        android:layout_below="@id/tvTomorrow"
+        android:textSize="18dp"
+        android:layout_alignParentRight="true"
+        android:text="city2"
         android:id="@+id/tvTomorrowCityB"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTomorrowCityA"
+        android:textSize="10dp"
+        android:text="city1"
+        android:id="@+id/tvTomorrowConditionsA"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTomorrowCityA"
+        android:textSize="10dp"
+        android:layout_alignParentRight="true"
+        android:text="city2"
+        android:id="@+id/tvTomorrowConditionsB"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTomorrowConditionsA"
+        android:paddingTop="18dp"
+        android:text="time"
+        android:id="@+id/tvTomorrowTime"
+        android:layout_centerHorizontal="true" />
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvTomorrowTime"
+        android:id="@+id/skTomorrow"/>
 
 
 

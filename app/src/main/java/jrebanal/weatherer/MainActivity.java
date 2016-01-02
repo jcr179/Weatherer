@@ -5,6 +5,10 @@ package jrebanal.weatherer;
 
 // forecast.io api key: be5c0f9b08e52e3f2da12e30ce8d3242
 
+// v0.0001: (initial commit, first master) Got correct temperature to display in current city A text view.
+
+// v0.001: New branch.
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,10 +38,11 @@ import java.io.IOException;
 
 public class MainActivity extends Activity implements OnItemSelectedListener {
 private double lat1, lon1, lat2, lon2;
+    private String conditions1, conditions2;
     private String url = "https://api.forecast.io/forecast/"; // ... APIKEY/LATITUDE,LONGITUDE"
     private String apikey = "be5c0f9b08e52e3f2da12e30ce8d3242";
-    private String apicall; //currently only relating to city 1 and mississauga.
-    private double temp, apparentTemp;
+    private String apicall1, apicall2;
+    private double temp, apparentTemp, temp2, apparentTemp2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,40 +77,126 @@ private double lat1, lon1, lat2, lon2;
         setLat2(43.653226);
         setLon2(-79.3831843);
 
-        apicall = (url + apikey + "/" + Double.toString(lat1) + "," + Double.toString(lon1)); //debug, city 1.
+        apicall1 = (url + apikey + "/" + Double.toString(lat1) + "," + Double.toString(lon1)); //debug, city 1.
+        apicall2 = (url + apikey + "/" + Double.toString(lat2) + "," + Double.toString(lon2)); //debug, city 2.
 
-        // new WeatherAsync().execute(url + successapikey + Double.toString(lat1) + Double.toString(lon1)); // city 1
+        new WeatherAsync().execute(apicall1, apicall2); //following lines up to sbar() call are to find data
+                                                        //immediately upon launching app
 
-        //new WeatherAsync().execute(url + apikey + Double.toString(lat2) + Double.toString(lon2)); // city 2
+        TextView currentTemp = (TextView)findViewById(R.id.tvNowCityA);
+        String s = Double.toString(getTemp());
+        String trim = s.substring(0, Math.min(s.length(), 5)); //second argument of substring() - change the 5 to
+                                                               //however many characters from string s you want up to
+        currentTemp.setText(trim + "°C");
 
+        TextView currentTemp2 = (TextView)findViewById(R.id.tvNowCityB);
+        String s2 = Double.toString(getTemp2());
+        String trim2 = s2.substring(0, Math.min(s2.length(), 5));
+        currentTemp2.setText(trim2 + "°C");
+
+
+        sbar(); // initialize seekbar listener for skToday
+
+    }
+
+    public void sbar() {
+        final SeekBar seekbar = (SeekBar)findViewById(R.id.skToday);
+        final TextView tv = (TextView)findViewById(R.id.tvTodayCityB); //debug, let things display here
+        seekbar.setMax(16);
+
+        tv.setText("" + seekbar.getProgress() + "/" + seekbar.getMax());
+
+        seekbar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    int progress_value;
+
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        progress_value = progress;
+
+                        tv.setText("" + progress + "/" + seekbar.getMax());
+                        Toast.makeText(MainActivity.this, "Progress changed", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        Toast.makeText(MainActivity.this, "Seekbar tracking", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        tv.setText("" + progress_value + "/" + seekbar.getMax());
+                        Toast.makeText(MainActivity.this, "Seekbar stopped tracking", Toast.LENGTH_SHORT).show();
+
+                    }
+        }
+        );
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
         String item = parent.getItemAtPosition(position).toString();
-        Log.d("Weatherer", "apicall: " + apicall); //debug. correct
+        //Log.d("Weatherer", "apicall: " + apicall1); //debug. correct
 
 
         if (item.equals("Mississauga")) {
-            //Toast.makeText(parent.getContext(), "mississauga!", Toast.LENGTH_LONG).show(); //debug
             setLat1(43.5890452);  //latitude: degrees north of the equator
             setLon1(-79.6441198); //longitude: degrees east of the prime meridian
-            new WeatherAsync().execute(apicall); // city 1
+            apicall1 = (url + apikey + "/" + Double.toString(lat1) + "," + Double.toString(lon1)); //debug, city 1.
+
+            new WeatherAsync().execute(apicall1, apicall2);
 
             TextView currentTemp = (TextView)findViewById(R.id.tvNowCityA);
-            currentTemp.setText(Double.toString(getTemp()));
+            String s = Double.toString(getTemp());
+            String trim = s.substring(0, Math.min(s.length(), 5));
+            String t = Double.toString(getApparentTemp());
+            String trimt = t.substring(0, Math.min(t.length(), 5));
+            currentTemp.setText(trim + "°C / " + trimt + "°C");
+
+            TextView currentConditions = (TextView)findViewById(R.id.tvNowConditionsA);
+            currentConditions.setText(conditions1);
+
+            TextView currentTemp2 = (TextView)findViewById(R.id.tvNowCityB);
+            String s2 = Double.toString(getTemp2());
+            String trim2 = s2.substring(0, Math.min(s2.length(), 5));
+            String t2 = Double.toString(getApparentTemp2());
+            String trimt2 = t2.substring(0, Math.min(t2.length(), 5));
+            currentTemp2.setText(trim2 + "°C / " + trimt2 + "°C");
+
+            TextView currentConditions2 = (TextView)findViewById(R.id.tvNowConditionsB);
+            currentConditions2.setText(conditions2);
 
         }
 
         else if (item.equals("Brampton")) {
-            //Toast.makeText(parent.getContext(), "brampton!", Toast.LENGTH_LONG).show(); //debug
             setLat1(43.685271);
             setLon1(-79.759924); //negative values mean west of the prime meridian
-            new WeatherAsync().execute(apicall); // city 1
+            apicall1 = (url + apikey + "/" + Double.toString(lat1) + "," + Double.toString(lon1)); //debug, city 1.
+
+            new WeatherAsync().execute(apicall1, apicall2);
 
             TextView currentTemp = (TextView)findViewById(R.id.tvNowCityA);
-            currentTemp.setText(Double.toString(getTemp()));
+            String s = Double.toString(getTemp());
+            String trim = s.substring(0, Math.min(s.length(), 5));
+            String t = Double.toString(getApparentTemp());
+            String trimt = t.substring(0, Math.min(t.length(), 5));
+            currentTemp.setText(trim + "°C / " + trimt + "°C");
+
+            TextView currentConditions = (TextView)findViewById(R.id.tvNowConditionsA);
+            currentConditions.setText(conditions1);
+
+            TextView currentTemp2 = (TextView)findViewById(R.id.tvNowCityB);
+            String s2 = Double.toString(getTemp2());
+            String trim2 = s2.substring(0, Math.min(s2.length(), 5));
+            String t2 = Double.toString(getApparentTemp2());
+            String trimt2 = t2.substring(0, Math.min(t2.length(), 5));
+            currentTemp2.setText(trim2 + "°C / " + trimt2 + "°C");
+
+            TextView currentConditions2 = (TextView)findViewById(R.id.tvNowConditionsB);
+            currentConditions2.setText(conditions2);
+
         }
     }
 
@@ -161,7 +253,37 @@ private double lat1, lon1, lat2, lon2;
         return apparentTemp;
     }
 
+    public void setTemp2(double temp2) {
+        this.temp2 = temp2;
+    }
 
+    public double getTemp2() {
+        return temp2;
+    }
+
+    public void setApparentTemp2(double apparentTemp2) {
+        this.apparentTemp2 = apparentTemp2;
+    }
+
+    public double getApparentTemp2() {
+        return apparentTemp2;
+    }
+
+    public void setConditions1(String c) {
+        this.conditions1 = c;
+    }
+
+    public String getConditions1() {
+        return conditions1;
+    }
+
+    public void setConditions2(String c) {
+        this.conditions2 = c;
+    }
+
+    public String getConditions2() {
+        return conditions2;
+    }
 
     public class WeatherAsync extends AsyncTask<String, Void, Boolean>{ //parameter, progress, result
 
@@ -171,49 +293,49 @@ private double lat1, lon1, lat2, lon2;
 
             try {
                 HttpClient client = new DefaultHttpClient();
+                HttpClient client2 = new DefaultHttpClient();
                 Log.w("Weatherer", "Parameter passed to execute(): " + params[0]);
-                URI site = new URI(apicall);
+                URI site = new URI(apicall1);
+                URI site2 = new URI(apicall2);
                 HttpGet request = new HttpGet();
+                HttpGet request2 = new HttpGet();
                 request.setURI(site);
+                request2.setURI(site2);
                 HttpResponse response = client.execute(request); //might throw an exception. This holds the
                                                               //result of what you get when posting params[0].
 
-                //dec 31 (1) - the HttpResponse line no longer throws an exception,
-                //but it gets status code 404: page not found. The apicall passed to it is the real deal.
-
-                //dec 31 (2) - this Http stuff is messed up. very inconsistent when testing with other websites
-                //best to just learn another method/library to request, receive, and parse data.
-                //TODO replace lines above for http client, post, response
-                //TODO and re-do status check line, and everything up to the json stuff in the if statement below.
-
-
-
-                //dec 31 - i think the HttpResponse line is throwing an exception. is there another library
-                //that can hold the json data and handle requests/responses?
-
-                //printStackTrace() in exception shows that it was because the app did not ask for internet permissions
-
-                //after fixing this, an exception can be avoided but the status code is not 200
-
-
+                HttpResponse response2 = client2.execute(request2);
 
                 int status = response.getStatusLine().getStatusCode();
+                int status2 = response2.getStatusLine().getStatusCode();
 
-                Log.d("Weatherer", "Obtained status: " + Integer.toString(status));
+                Log.d("Weatherer", "[CITY A] Obtained status: " + Integer.toString(status));
+                Log.d("Weatherer", "[CITY B] Obtained status: " + Integer.toString(status2));
 
-                if (status == 200) { // if we got something successfully
+                if ( (status == 200) && (status2 == 200)) { // if we got something successfully
                     HttpEntity entity = response.getEntity();
+                    HttpEntity entity2 = response2.getEntity();
                     String data = EntityUtils.toString(entity); //data variable is to be parsed
-                    Log.d("Weatherer", "##### GOT STRING #####\n" + data);
+                    String data2 = EntityUtils.toString(entity2);
+                    Log.d("Weatherer", "[CITY A] ##### GOT STRING #####\n" + data);
+                    Log.d("Weatherer", "[CITY B] ##### GOT STRING #####\n" + data2);
 
                     JSONObject jObj = new JSONObject(data);     //jObj must refer to the jsonobject "hourly"
                                                                 //to get hourly data.
 
+                    JSONObject jObj2 = new JSONObject(data2);
+
                     JSONObject jCurrently = jObj.getJSONObject("currently"); // there is a "currently" array in api call that holds
                                                                  // the hourly info we want, within the "hourly" object
 
-                    setTemp(jCurrently.getDouble("temperature"));
-                    setApparentTemp(jCurrently.getDouble("apparentTemperature"));
+                    JSONObject jCurrently2 = jObj2.getJSONObject("currently");
+
+                    setTemp(toCelsius(jCurrently.getDouble("temperature")));
+                    setApparentTemp(toCelsius(jCurrently.getDouble("apparentTemperature")));
+                    setConditions1(jCurrently.getString("summary"));
+                    setTemp2(toCelsius(jCurrently2.getDouble("temperature")));
+                    setApparentTemp2(toCelsius(jCurrently2.getDouble("apparentTemperature")));
+                    setConditions2(jCurrently2.getString("summary"));
                     return true;
 
 
@@ -235,15 +357,19 @@ private double lat1, lon1, lat2, lon2;
 
         protected void onPostExecute(Boolean success) {
             if (success) {
-                Toast toast = Toast.makeText(MainActivity.this, "Success!", Toast.LENGTH_SHORT);
-                toast.show();
+                //Toast toast = Toast.makeText(MainActivity.this, "Success!", Toast.LENGTH_SHORT);
+                //toast.show();
             }
 
             else {
-                Toast toast = Toast.makeText(MainActivity.this, "Failure!", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(MainActivity.this, "Something went wrong!", Toast.LENGTH_SHORT);
                 toast.show();
             }
         }
+    }
+
+    public double toCelsius(double temp) {
+        return ( (temp - 32.0) * (5.0 / 9.0) );
     }
 
 }
