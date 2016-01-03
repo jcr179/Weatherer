@@ -9,7 +9,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="jrebanal.weatherer.MainActivity">
+    tools:context="jrebanal.weatherer.MainActivity"
+    android:background="@android:color/holo_blue_bright">
 
     <Spinner
         android:layout_width="match_parent"
@@ -24,7 +25,8 @@
         android:layout_below="@id/spCities"
         android:textSize="50dp"
         android:text="RIGHT NOW"
-        android:id="@+id/tvNow"/>
+        android:id="@+id/tvNow"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -63,11 +65,21 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/tvNowConditionsA"
+        android:layout_centerHorizontal="true"
+        android:textSize="18dp"
+        android:text="test"
+        android:id="@+id/tvNowDate"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/tvNowCityA"
-        android:paddingTop="50dp"
+        android:paddingTop="60dp"
         android:textSize="50dp"
         android:text="TODAY"
-        android:id="@+id/tvToday"/>
+        android:id="@+id/tvToday"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -124,10 +136,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/skToday"
-        android:paddingTop="30dp"
+        android:paddingTop="20dp"
         android:textSize="50dp"
         android:text="TOMORROW"
-        android:id="@+id/tvTomorrow"/>
+        android:id="@+id/tvTomorrow"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -179,6 +192,16 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/tvTomorrowTime"
         android:id="@+id/skTomorrow"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/skTomorrow"
+        android:paddingTop="5dp"
+        android:textSize="8dp"
+        android:text="Dropdown selects left city, Toronto always right * Temp. format: real temp/actual temp"
+        android:id="@+id/tvExplain"
+        android:layout_centerHorizontal="true" />
 
 
 

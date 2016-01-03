@@ -10,7 +10,11 @@ package jrebanal.weatherer;
 // v0.001: New branch.
 
 import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -101,36 +105,129 @@ private double lat1, lon1, lat2, lon2;
 
     public void sbar() {
         final SeekBar seekbar = (SeekBar)findViewById(R.id.skToday);
-        final TextView tv = (TextView)findViewById(R.id.tvTodayCityB); //debug, let things display here
-        seekbar.setMax(16);
+        final TextView tvTodayCityA = (TextView)findViewById(R.id.tvTodayCityA);
+        final TextView tvTodayCityB = (TextView)findViewById(R.id.tvTodayCityB);
+        final TextView tvTodayConditionsA = (TextView)findViewById(R.id.tvTodayConditionsA);
+        final TextView tvTodayConditionsB = (TextView)findViewById(R.id.tvTodayConditionsB);
 
-        tv.setText("" + seekbar.getProgress() + "/" + seekbar.getMax());
+        final SeekBar seekbar2 = (SeekBar)findViewById(R.id.skTomorrow);
+        final TextView tvTomorrowCityA = (TextView)findViewById(R.id.tvTomorrowCityA);
+        final TextView tvTomorrowCityB = (TextView)findViewById(R.id.tvTomorrowCityB);
+        final TextView tvTomorrowConditionsA = (TextView)findViewById(R.id.tvTomorrowConditionsA);
+        final TextView tvTomorrowConditionsB = (TextView)findViewById(R.id.tvTomorrowConditionsB);
 
-        seekbar.setOnSeekBarChangeListener(
+        final HourlyWeather hourly = new HourlyWeather();
+        seekbar.setMax(17); // from 0 to 17, there are 18 beats for 18 hour coverage: 6am to midnight
+        seekbar2.setMax(17);
+
+        // tv.setText("" + seekbar.getProgress() + "/" + seekbar.getMax());
+
+        seekbar.setOnSeekBarChangeListener( //today
                 new SeekBar.OnSeekBarChangeListener() {
                     int progress_value;
 
 
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        progress_value = progress;
 
-                        tv.setText("" + progress + "/" + seekbar.getMax());
-                        Toast.makeText(MainActivity.this, "Progress changed", Toast.LENGTH_SHORT).show();
+                        for (int i = 0; i < 18; i++) {
+                            if (progress == i) {
+                                String s = Double.toString(hourly.getTemps1()[i]);
+                                String trim = s.substring(0, Math.min(s.length(), 5));
+                                String t = Double.toString(hourly.getAtemps1()[i]);
+                                String trimt = t.substring(0, Math.min(t.length(), 5));
+
+                                tvTodayCityA.setText(trim + "°C / " + trimt + "°C");
+                                tvTodayConditionsA.setText(hourly.getTodayConditions1()[i]);
+
+                                String s2 = Double.toString(hourly.getTemps2()[i]);
+                                String trim2 = s2.substring(0, Math.min(s2.length(), 5));
+                                String t2 = Double.toString(hourly.getAtemps2()[i]);
+                                String trimt2 = t2.substring(0, Math.min(t2.length(), 5));
+
+                                tvTodayCityB.setText(trim2 + "°C / " + trimt2 + "°C");
+                                tvTodayConditionsB.setText(hourly.getTodayConditions2()[i]);
+
+                                DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss"); // you define this format
+                                Date today = Calendar.getInstance().getTime();
+                                String dateString = df.format(today);
+
+                                int hour = Integer.parseInt(dateString.substring(11, 13)) + i;
+
+                                String todayTime = Integer.toString(hour) + "00 hours";
+
+                                hourly.setTvTimeToday(todayTime);
+                                TextView tvTodayTime = (TextView)findViewById(R.id.tvTodayTime);
+                                tvTodayTime.setText(hourly.getTvTimeToday());
+                            }
+                        }
+
+                        //tv.setText("" + progress + "/" + seekbar.getMax());
                     }
 
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
-                        Toast.makeText(MainActivity.this, "Seekbar tracking", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
-                        tv.setText("" + progress_value + "/" + seekbar.getMax());
-                        Toast.makeText(MainActivity.this, "Seekbar stopped tracking", Toast.LENGTH_SHORT).show();
+                     //   tv.setText("" + progress_value + "/" + seekbar.getMax());
 
                     }
         }
+        );
+
+        seekbar2.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    int progress_value;
+
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        for (int i = 0; i < 18; i++) {
+                            if (progress == i) {
+                                String s = Double.toString(hourly.getTempsTom1()[i]);
+                                String trim = s.substring(0, Math.min(s.length(), 5));
+                                String t = Double.toString(hourly.getAtempsTom1()[i]);
+                                String trimt = t.substring(0, Math.min(t.length(), 5));
+
+                                tvTomorrowCityA.setText(trim + "°C / " + trimt + "°C");
+                                tvTomorrowConditionsA.setText(hourly.getTomorrowConditions1()[i]);
+
+                                String s2 = Double.toString(hourly.getTempsTom2()[i]);
+                                String trim2 = s2.substring(0, Math.min(s2.length(), 5));
+                                String t2 = Double.toString(hourly.getAtempsTom2()[i]);
+                                String trimt2 = t2.substring(0, Math.min(t2.length(), 5));
+
+                                tvTomorrowCityB.setText(trim2 + "°C / " + trimt2 + "°C");
+                                tvTomorrowConditionsB.setText(hourly.getTomorrowConditions2()[i]);
+
+                                DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss"); // you define this format
+                                Date today = Calendar.getInstance().getTime();
+                                String dateString = df.format(today);
+
+                                int hour = Integer.parseInt(dateString.substring(11, 13)) + i;
+
+                                String tomorrowTime = Integer.toString(hour) + "00 hours tomorrow";
+
+                                hourly.setTvTimeTomorrow(tomorrowTime);
+                                TextView tvTomorrowTime = (TextView)findViewById(R.id.tvTomorrowTime);
+
+                                tvTomorrowTime.setText(hourly.getTvTimeTomorrow());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        //   tv.setText("" + progress_value + "/" + seekbar.getMax());
+
+                    }
+                }
         );
     }
 
@@ -138,13 +235,12 @@ private double lat1, lon1, lat2, lon2;
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
         String item = parent.getItemAtPosition(position).toString();
-        //Log.d("Weatherer", "apicall: " + apicall1); //debug. correct
 
 
         if (item.equals("Mississauga")) {
             setLat1(43.5890452);  //latitude: degrees north of the equator
             setLon1(-79.6441198); //longitude: degrees east of the prime meridian
-            apicall1 = (url + apikey + "/" + Double.toString(lat1) + "," + Double.toString(lon1)); //debug, city 1.
+            apicall1 = (url + apikey + "/" + Double.toString(lat1) + "," + Double.toString(lon1));
 
             new WeatherAsync().execute(apicall1, apicall2);
 
@@ -167,13 +263,31 @@ private double lat1, lon1, lat2, lon2;
 
             TextView currentConditions2 = (TextView)findViewById(R.id.tvNowConditionsB);
             currentConditions2.setText(conditions2);
+
+// Create an instance of SimpleDateFormat used for formatting
+// the string representation of date (month/day/year)
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss"); // you define this format
+
+// Get the date today using Calendar object.
+            Date today = Calendar.getInstance().getTime();
+// Using DateFormat format method we can create a string
+// representation of a date with the defined format.
+            String dateString = df.format(today);
+
+            Log.d("Weatherer", "[DATE] Date right now: " + dateString); //debug
+            TextView tvNowDate = (TextView)findViewById(R.id.tvNowDate);
+            tvNowDate.setText(dateString);
+
+
+
+
 
         }
 
         else if (item.equals("Brampton")) {
             setLat1(43.685271);
             setLon1(-79.759924); //negative values mean west of the prime meridian
-            apicall1 = (url + apikey + "/" + Double.toString(lat1) + "," + Double.toString(lon1)); //debug, city 1.
+            apicall1 = (url + apikey + "/" + Double.toString(lat1) + "," + Double.toString(lon1));
 
             new WeatherAsync().execute(apicall1, apicall2);
 
@@ -196,6 +310,29 @@ private double lat1, lon1, lat2, lon2;
 
             TextView currentConditions2 = (TextView)findViewById(R.id.tvNowConditionsB);
             currentConditions2.setText(conditions2);
+
+// Create an instance of SimpleDateFormat used for formatting
+// the string representation of date (month/day/year)
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss"); // you define this format
+
+// Get the date today using Calendar object.
+            Date today = Calendar.getInstance().getTime();
+// Using DateFormat format method we can create a string
+// representation of a date with the defined format.
+            String dateString = df.format(today);
+
+            Log.d("Weatherer", "[DATE] Date right now: " + dateString); //debug
+            TextView tvNowDate = (TextView)findViewById(R.id.tvNowDate);
+            tvNowDate.setText(dateString);
+
+            /*
+            HourlyWeather hourly = new HourlyWeather();
+            TextView tvTodayTime = (TextView)findViewById(R.id.tvTodayTime);
+            TextView tvTomorrowTime = (TextView)findViewById(R.id.tvTomorrowTime);
+
+            tvTodayTime.setText(hourly.getTvTimeToday());
+            tvTomorrowTime.setText(hourly.getTvTimeTomorrow());
+            */
 
         }
     }
@@ -336,6 +473,38 @@ private double lat1, lon1, lat2, lon2;
                     setTemp2(toCelsius(jCurrently2.getDouble("temperature")));
                     setApparentTemp2(toCelsius(jCurrently2.getDouble("apparentTemperature")));
                     setConditions2(jCurrently2.getString("summary"));
+
+
+                    HourlyWeather hourly = new HourlyWeather();
+
+                    jObj = jObj.getJSONObject("hourly");
+                    jObj2 = jObj2.getJSONObject("hourly");
+                    JSONArray hourlyData = jObj.getJSONArray("data");   // fill static HourlyWeather arrays with
+                    JSONArray hourlyData2 = jObj2.getJSONArray("data"); // hourly data
+                    for (int i = 0; i < 18; i++) {
+                        JSONObject j = hourlyData.getJSONObject(i);
+                        JSONObject j2 = hourlyData2.getJSONObject(i);
+                        hourly.setTemps1(toCelsius(j.getDouble("temperature")), i);
+                        hourly.setAtemps1(toCelsius(j.getDouble("apparentTemperature")), i);
+                        hourly.setTodayConditions1(j.getString("summary"), i);
+                        hourly.setTemps2(toCelsius(j2.getDouble("temperature")), i);
+                        hourly.setAtemps2(toCelsius(j2.getDouble("apparentTemperature")), i);
+                        hourly.setTodayConditions2(j2.getString("summary"), i);
+
+                        JSONObject jTom = hourlyData.getJSONObject(i + 24); // get the object 24 hours ahead
+                        JSONObject jTom2 = hourlyData2.getJSONObject(i + 24);
+                        hourly.setTempsTom1(toCelsius(jTom.getDouble("temperature")), i);
+                        hourly.setAtempsTom1(toCelsius(jTom.getDouble("apparentTemperature")), i);
+                        hourly.setTomorrowConditions1(jTom.getString("summary"), i);
+                        hourly.setTempsTom2(toCelsius(jTom2.getDouble("temperature")), i);
+                        hourly.setAtempsTom2(toCelsius(jTom2.getDouble("apparentTemperature")), i);
+                        hourly.setTomorrowConditions2(jTom2.getString("summary"), i);
+
+
+                    }
+
+
+
                     return true;
 
 
