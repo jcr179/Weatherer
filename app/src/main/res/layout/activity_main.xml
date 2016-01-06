@@ -10,7 +10,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="jrebanal.weatherer.MainActivity"
-    android:background="@android:color/holo_blue_bright">
+    android:background="#b8fffe"
+    android:backgroundTint="#65dfff">
 
     <Spinner
         android:layout_width="match_parent"
@@ -199,7 +200,7 @@
         android:layout_below="@id/skTomorrow"
         android:paddingTop="5dp"
         android:textSize="8dp"
-        android:text="Dropdown selects left city, Toronto always right * Temp. format: real temp/actual temp"
+        android:text="Dropdown selects left city, Toronto always right // (real/apparent) temp"
         android:id="@+id/tvExplain"
         android:layout_centerHorizontal="true" />
 
